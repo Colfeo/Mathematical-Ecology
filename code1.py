@@ -21,7 +21,7 @@ for line in lines :
         print(line)
         index+=1
 """
-
+print("hello world")
 data = pd.read_csv('classeur1.csv',sep=';') 
 Wpop = data["Estimated number of wolves"].to_numpy()
 
