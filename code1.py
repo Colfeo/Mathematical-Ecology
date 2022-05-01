@@ -112,4 +112,38 @@ def plotvalue() :
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
 
-plotvalue()
+def syspack() : 
+    y = np.arange(2001.5,2013.5)
+    plt.plot(y,Npacks,label="Number of packs")
+    plt.plot(y,Npairs,label="Number of pair")
+    plt.plot(y,Nloners,label="Number of loners")
+    plt.legend()
+    plt.show()
+
+def system() :
+    L = Nloners
+    Pi = [Npairs[0]]
+    Pc = [Npacks[0]]
+    #Fp = [0]
+    for i in range(0,11) :
+        
+        Pi.append(0.5 *L[i] + 0.9*Pi[i]  )
+        val = 1.10* Pc[i] + 0.25 * Pi[i] + 0.3 *L[i] 
+        Pc.append( val )
+        #Fp.append(0.2 * Pc[i])
+        
+        
+    y = np.arange(2001.5,2013.5)
+    plt.plot(y,Pc,label="Number of packs")
+    plt.plot(y,Pi,label="Number of pair")
+    plt.plot(y,L,label="Number of Loners")
+    
+
+    
+    plt.legend()
+    plt.show()
+
+
+syspack()
+system()
+print("blabla")
