@@ -50,6 +50,9 @@ Nearest_dist = data["Nearest neighbour distance between wolf groups"].to_numpy()
 Nlitters = data["N litters"].to_numpy()
 Ndead = data["N dead wolves"].to_numpy()
 
+add = [171,201,362,441,840]
+Wpop2 = np.concatenate((Wpop,add))
+
 def WolfEmp(x) : #Inspire from original paper
     y = np.zeros(len(x))
     for i in range(len(x)) :
@@ -61,22 +64,30 @@ def Wolf_ExpMod(x) : #solution of exponetiel model fit
         y[i] = 9*math.exp(0.253457826*x[i]) 
     return y
 def Wolf_Logsol(x) : #logistical equation sol : dN/dt = rN(1-N/K)
-    K = 789
+    K = 850
     #k= 0.176363
     k= 0.253457826
+    #k = 0.35
     y = np.zeros(len(x))
     for i in range(len(x)) :
-        y[i] = K/(1+(K-9)*math.exp(-x[i]*k)*1/9)
+        #y[i] = K/(1+(K-9)*math.exp(-x[i]*k)*1/9)
+        y[i] = K/(1+ ((K-10)/10) * math.exp(-x[i]*k ))
     return y
 def plotpop() :
     #plt.plot(np.arange(12),Wpop)
     y = np.arange(2001.5,2013.5)
+    yadd = np.arange(2001.5,2018.5)
     y2 = np.arange(2001.5,2033.5)
     y1 = np.arange(0,32)
-    plt.scatter(y,Wpop,label="data")
-    #plt.plot(y,WolfEmp(y),label='exponentiel model')
-    #plt.plot(y,Wolf_ExpMod(y1))
+    yy = np.arange(12)
+    #plt.scatter(y,Wpop,label="data")
+    plt.scatter(yadd[:13],Wpop2[:13],label="data1")
+    plt.scatter(yadd[12:],Wpop2[12:],label="data2")
+    #plt.plot(y2,WolfEmp(y2),label='exponentiel model')
+    #plt.plot(y2,Wolf_ExpMod(y1), label='exponentiel model 2')
     plt.plot(y2,Wolf_Logsol(y1),label="logistic model")
+    #print(WolfEmp(y2)[16])
+    #print(Wolf_ExpMod(y1)[16])
     plt.legend()
     plt.show()
 
@@ -117,26 +128,34 @@ def syspack() :
     plt.plot(y,Npacks,label="Number of packs")
     plt.plot(y,Npairs,label="Number of pair")
     plt.plot(y,Nloners,label="Number of loners")
+    plt.title('Exact value from the data collected')
     plt.legend()
     plt.show()
 
 def system() :
-    L = Nloners
+    L = [Nloners[0],Nloners[1],Nloners[2],Nloners[3]]
     Pi = [Npairs[0]]
     Pc = [Npacks[0]]
-    #Fp = [0]
-    for i in range(0,11) :
-        
-        Pi.append(0.5 *L[i] + 0.9*Pi[i]  )
-        val = 1.10* Pc[i] + 0.25 * Pi[i] + 0.3 *L[i] 
+    #Fp = [0]#31
+    for i in range(0,31) :
+        if (i >=3) :
+            L.append(0.3* Pc[i])
+        Pi.append(0.5 *L[i] + 0.5*Pi[i]  )
+        val = 1.10* Pc[i] + 0.55 * Pi[i] 
         Pc.append( val )
         #Fp.append(0.2 * Pc[i])
         
         
-    y = np.arange(2001.5,2013.5)
-    plt.plot(y,Pc,label="Number of packs")
-    plt.plot(y,Pi,label="Number of pair")
-    plt.plot(y,L,label="Number of Loners")
+    y1 = np.arange(2001.5,2013.5)
+    y = np.arange(2001.5,2033.5)
+    plt.plot(y,Pc,label="packs according to the system")
+    plt.plot(y,Pi,label="pair according to the system")
+    plt.plot(y,L,label="Loners according to the system")
+    plt.title('computed value from the first model')
+    
+    plt.plot(y1,Npacks,label="Number of packs")
+    plt.plot(y1,Npairs,label="Number of pair")
+    plt.plot(y1,Nloners,label="Number of loners")
     
 
     
@@ -144,6 +163,43 @@ def system() :
     plt.show()
 
 
-syspack()
-system()
-print("blabla")
+def final_sys() :
+    L = [Nloners[0],Nloners[1],Nloners[2],Nloners[3]]
+    Pi = [Npairs[0]]
+    Pc = [Npacks[0]]
+    #Fp = [0]#31
+    for i in range(0,31) :
+        if (i >=3) :
+            L.append(0.3* Pc[i])
+        Pi.append(0.5 *L[i] + 0.5*Pi[i]  )
+        val = 0.3*Pc[i]*(1 - Pc[i]/55) + 0.9*Pc[i] + 0.45 * Pi[i] 
+        Pc.append( val )
+        
+    print(L)
+    y = np.arange(2001.5,2013.5)
+    y1 = np.arange(2001.5,2033.5)
+    plt.plot(y1,Pc,label="packs according to the system")
+    plt.plot(y1,Pi,label="pair according to the system")
+    plt.plot(y1,L,label="Loners according to the system")
+    
+    plt.plot(y,Npacks,label="Number of packs")
+    plt.plot(y,Npairs,label="Number of pair")
+    plt.plot(y,Nloners,label="Number of loners")
+    
+    plt.title('computed value from the second model')
+    
+
+    
+    plt.legend()
+    plt.show()
+    
+# system()  
+# final_sys() 
+    
+plotpop()  
+    
+    
+    
+    
+    
+    
